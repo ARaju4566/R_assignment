@@ -1,0 +1,318 @@
+---
+title: "R_assignment"
+output: html_document
+date: "2025-03-13"
+---
+```{r}
+library(tidyverse)
+library(tidyr)
+```
+
+```{r}
+transposed_group<- read.delim("transposed_genotypes.txt")
+snp_position<- read.delim("snp_position.txt")
+
+```
+```{r}
+lines <- read.delim("transposed_genotypes.txt")
+transposed_group_new <- lines[-c(0, 1),] 
+
+```
+```{r}
+#column matrix data to character
+colnames(transposed_group_new)<- as.character(transposed_group_new[1,])
+transposed_group_new[-c(1),]
+```
+```{r}
+#merging the columns
+merge<- merge(snp_position,transposed_group_new, by.x = "SNP_ID", by.y = "Group", all=TRUE)
+```
+```{r}
+# Find columns containing 'ZMMIL'
+cols_ZMMIL <- which(sapply(merge, function(col) "ZMMIL" %in% col))
+print(cols_ZMMIL)
+cols_ZMMLR <- which(sapply(merge, function(col) "ZMMLR" %in% col))
+print(cols_ZMMLR)
+cols_ZMMMR <- which(sapply(merge, function(col) "ZMMMR" %in% col))
+print(cols_ZMMMR)
+```
+```{r}
+maize.txt = selected_columns <- merge[, c(1, 3, 4, 2508:2797, 1225:2480, 2481:2507)]
+maize<- as.data.frame(maize.txt)
+
+```
+```{r}
+#replacing the ? with NA 
+maize[maize == "?"] <- NA
+```
+
+```{r}
+#separate out each of the chromosomes
+separated_maize<- split(maize, maize$Chromosome)
+```
+
+```{r}
+# Step 4: Sort data based on numeric Position values (increasing order)
+maize_sorted_increasing <- lapply(separated_maize, function(df) {
+  df$Position <- as.numeric(df$Position)  # Convert Position to numeric
+  df <- df[order(df$Position), ]  # Sort by Position (increasing)
+  return(df)
+})
+
+# Step 5: Write sorted data to separate files, keeping "?" as missing data
+lapply(names(maize_sorted_increasing), function(chr) {
+  write.table(
+    maize_sorted_increasing[[chr]],
+    file = paste0("Maize_increasing_", chr, ".txt"),
+    sep = "\t",
+    row.names = FALSE,
+    quote = FALSE
+  )
+})
+
+```
+```{r}
+maize_sorted_decreasing <- lapply(separated_maize, function(df) df[order(df$Position), ])
+#decreasing order 
+sorted_data_dec <- lapply(maize_sorted_decreasing, function(df) df[order(-as.numeric(df$Position)), ])
+lapply(names(sorted_data_dec), function(chr) {
+  write.table(
+    sorted_data_dec[[chr]],
+    file = paste0("Maize_sorted_decreasing_", chr, ".txt"),  # Output file name
+    sep = "\t",  # Tab-delimited
+    row.names = FALSE,
+  )
+})
+```
+```{r}
+dir.create("maize_sorted_increasing")
+
+# List all files that match the pattern
+files_to_move <- paste0("Maize_increasing_", 1:10, ".txt")
+
+# Move each file into the new folder
+file.rename(files_to_move, file.path("maize_sorted_increasing", files_to_move))
+```
+
+
+```{r}
+dir.create("maize_sorted_files")
+
+# List all files that match the pattern
+files_to_move <- paste0("maize_sorted_decreasing_", 1:10, ".txt")
+
+# Move each file into the new folder
+file.rename(files_to_move, file.path("maize_sorted_files", files_to_move))
+```
+```{r}
+library(readr)
+library(dplyr)
+
+# Load the genotype data
+genotypes <- read_tsv("fang_et_al_genotypes.txt")
+
+# Load SNP positions
+snp_positions <- read_tsv("snp_position.txt")
+
+```
+```{r}
+transposed_group<- read.delim("transposed_genotypes.txt")
+snp_position<- read.delim("snp_position.txt")
+lines <- read.delim("transposed_genotypes.txt")
+transposed_group_new <- lines[-c(0, 1),] 
+
+```
+
+```{r}
+colnames(transposed_group_new)<- as.character(transposed_group_new[1,])
+transposed_group_new[-c(1),]
+#merging the columns
+merge<- merge(snp_position,transposed_group_new, by.x = "SNP_ID", by.y = "Group", all=TRUE)
+
+```
+
+```{r}
+```
+
+
+```{r}
+# Find columns containing ZMPBA, ZMPIL, and ZMPJA
+cols_ZMPBA <- which(sapply(merge, function(col) "ZMPBA" %in% col))
+print(cols_ZMPBA)
+cols_ZMPIL <- which(sapply(merge, function(col) "ZMPIL" %in% col))
+print(cols_ZMPIL)
+cols_ZMPJA <- which(sapply(merge, function(col) "ZMPJA" %in% col))
+print(cols_ZMPJA)
+
+```
+```{r}
+teosinte.txt = selected_columns <- merge[, c(1, 3, 4, 89:988, 1178:1218, 989:1022)]
+teosinte<- as.data.frame(teosinte.txt)
+
+```
+
+```{r}
+#replacing the ? with NA 
+teosinte[teosinte == "?"] <- NA
+```
+
+```{r}
+#separate out each of the chromosomes
+separated_teosinte<- split(teosinte, teosinte$Chromosome)
+```
+
+```{r}
+# Step 4: Sort data based on numeric Position values (increasing order)
+teosinte_sorted_increasing <- lapply(separated_teosinte, function(df) {
+  df$Position <- as.numeric(df$Position)  # Convert Position to numeric
+  df <- df[order(df$Position), ]  # Sort by Position (increasing)
+  return(df)
+})
+# Step 5: Write sorted data to separate files, keeping "?" as missing data
+lapply(names(teosinte_sorted_increasing), function(chr) {
+  write.table(
+    teosinte_sorted_increasing[[chr]],
+    file = paste0("Teosinte_increasing_", chr, ".txt"),
+    sep = "\t",
+    row.names = FALSE,
+  )
+})
+
+dir.create("Teosinte_sorted_increasing")
+
+# List all files that match the pattern
+files_to_move <- paste0("Teosinte_increasing_", 1:10, ".txt")
+
+# Move each file into the new folder
+file.rename(files_to_move, file.path("Teosinte_sorted_increasing", files_to_move))
+
+```
+```{r}
+teosinte_sorted_decreasing <- lapply(separated_teosinte, function(df) df[order(df$Position), ])
+#decreasing order 
+sorted_data_dec <- lapply(teosinte_sorted_decreasing, function(df) df[order(-as.numeric(df$Position)), ])
+lapply(names(sorted_data_dec), function(chr) {
+  write.table(
+    sorted_data_dec[[chr]],
+    file = paste0("Teosinte_sorted_decreasing_", chr, ".txt"),  # Output file name
+    sep = "\t",  # Tab-delimited
+    row.names = FALSE,
+  )
+})
+
+dir.create("Teosinte_sorted_decreasing")
+
+# List all files that match the pattern
+files_to_move <- paste0("Teosinte_sorted_decreasing_", 1:10, ".txt")
+
+# Move each file into the new folder
+file.rename(files_to_move, file.path("Teosinte_sorted_decreasing", files_to_move))
+
+
+```
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(readr)
+# Count SNPs per chromosome
+snp_counts <- snp_positions %>%
+  group_by(Chromosome) %>%
+  summarise(SNP_Count = n())
+
+# Plot SNP distribution
+ggplot(snp_counts, aes(x = as.factor(Chromosome), y = SNP_Count, fill = as.factor(Chromosome))) +
+  geom_bar(stat = "identity") +
+  labs(title = "SNP Distribution Across Chromosomes",
+       x = "Chromosome",
+       y = "Number of SNPs") +
+  theme_minimal()
+
+```
+```{r}
+library(tidyverse)
+
+# Load genotype data
+genotypes <- read_tsv("fang_et_al_genotypes.txt")
+
+# Reshape the genotype data
+genotypes_long <- genotypes %>%
+  pivot_longer(cols = -c(Sample_ID, Group), names_to = "SNP_ID", values_to = "Genotype")
+
+# Define function to classify genotypes
+classify_genotype <- function(x) {
+  if (x %in% c("A/A", "C/C", "G/G", "T/T")) {
+    return("Homozygous")
+  } else if (x %in% c("A/C", "A/G", "A/T", "C/G", "C/T", "G/T")) {
+    return("Heterozygous")
+  } else {
+    return(NA)  # Ignore missing values for now
+  }
+}
+
+# Apply classification
+genotypes_long <- genotypes_long %>%
+  mutate(Genotype_Type = map_chr(Genotype, classify_genotype))
+
+# Count occurrences of each genotype type per group
+genotype_counts <- genotypes_long %>%
+  filter(!is.na(Genotype_Type)) %>%  # Remove missing values
+  group_by(Group, Genotype_Type) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  group_by(Group) %>%
+  mutate(Proportion = Count / sum(Count))  # Normalize within each group
+
+# Plot the data
+ggplot(genotype_counts, aes(x = Group, y = Proportion, fill = Genotype_Type)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(title = "Proportion of Homozygous vs. Heterozygous Genotypes by Group",
+       x = "Group",
+       y = "Proportion",
+       fill = "Genotype Type") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(readr)
+# Count SNPs per chromosome
+snp_counts <- snp_positions %>%
+  group_by(Sample) %>%
+  summarise(SNP_Count = n())
+
+# Plot SNP distribution
+ggplot(snp_counts, aes(x = as.factor(Sample), y = SNP_Count, fill = as.factor(Sample))) +
+  geom_bar(stat = "identity") +
+  labs(title = "SNP Distribution Across Chromosomes",
+       x = "Chromosome",
+       y = "Number of SNPs") +
+  theme_minimal()
+
+```
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Sample dataset structure
+snp_counts <- data.frame(
+  Chromosome = rep(c(1:10, "multiple unknown"), each = 2),
+  SNP_Count = c(155, 150, 120, 110, 100, 105, 90, 95, 140, 140, 
+                80, 80, 110, 108, 60, 62, 55, 55, 50, 50, 20, 30),
+  Group = rep(c("Maize", "Teosinte"), times = 11)
+)
+
+# Plot SNP distribution by group
+ggplot(snp_counts, aes(x = as.factor(Chromosome), y = SNP_Count, fill = Group)) +
+  geom_bar(stat = "identity", position = "dodge") +  # Dodge places bars side by side
+  labs(title = "Distribution of SNPs Across Chromosomes",
+       x = "Chromosome",
+       y = "Number of SNPs") +
+  scale_fill_manual(values = c("Maize" = "orange", "Teosinte" = "skyblue")) +  # Custom colors
+  theme_minimal()
+
+```
+
+
