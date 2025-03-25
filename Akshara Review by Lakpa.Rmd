@@ -59,3 +59,4 @@ merged_data %>%
   geom_col(position="dodge")
 ```
 #Comment: Missing data visualizaation missing. You can create a bar plot of missing genotype proportions across different groups.Overall, nice job. 
+
