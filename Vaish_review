@@ -1,0 +1,14 @@
+Hi,
+Your markdown file works fine and looks clean.
+1.I like your formatting of the plots.
+2.The output files look correct.
+3.Except for the second plot
+Here are some suggestions I wish to propose:
+1. It is preferred to add a .pdf copy of your Rmd file
+2. I get this standard error in Chunk 26 of the Rmd file:
+Column `Sample` is not found., it should work fine if 'Sample' is called as a string and x value is called correctly.
+3. If I remember right, Proportion of Homozygous vs. Heterozygous Genotypes by sample was also asked. Would be fine to update that too.
+4. I don't see missing data in the second part of visualization since it was ignored.
+
+Regards,
+Vaish.
