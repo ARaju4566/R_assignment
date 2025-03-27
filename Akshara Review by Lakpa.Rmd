@@ -1,0 +1,62 @@
+---
+title: "Akshara R_Assignment Review by Lakpa"
+output: html_document
+date: "2025-03-25"
+---
+
+
+```{r}
+library(tidyverse)
+library(tidyr)
+```
+#Comment: Your data inspection part is missing. Please complete it as part I section. 
+# At the start of your analysis
+
+```{r}
+str(transposed_group)
+summary(snp_position)
+file.info("fang_et_al_genotypes.txt") 
+file.info(:snp_position.txt")
+```
+
+#Comment: You haven't created maize file so I cannot find this object to run following code. This appeards to be missing step. 
+
+#Comment: You are reading same files mutliple times unnecessarily. 
+# Read files once at the beginning. 
+
+```{r}
+transposed_group <- read.delim("transposed_genotypes.txt", stringsAsFactors = FALSE)
+snp_position <- read.delim("snp_position.txt", stringsAsFactors = FALSE)
+```
+
+#Remove any empty {r} blocks
+```{r}
+colnames(transposed_group_new)<- as.character(transposed_group_new[1,])
+transposed_group_new[-c(1),]
+#merging the columns
+merge<- merge(snp_position,transposed_group_new, by.x = "SNP_ID", by.y = "Group", all=TRUE)
+
+```
+
+```{r}
+```
+
+#you haven't change the ?/? into -/- for decreasing order for both teosinte and maize. I have provided an example for the code. 
+# Replace "?/?" with "-/-"
+```{r}
+teosinte_chr_decreasing[teosinte_chr_decreasing == "?/?"] <- "-/-"
+
+```
+#Comment: Good use of ggplots for visualization.SNP distribution plot could compare maize/Teosinte
+```{r}
+# Current only shows overall distribution
+# Could add:
+merged_data %>%
+  mutate(Group = ifelse(grepl("^ZMM", names(.)), "Maize", "Teosinte")) %>%
+  group_by(Chromosome, Group) %>%
+  tally() %>%
+  ggplot(aes(x=Chromosome, y=n, fill=Group)) + 
+  geom_col(position="dodge")
+```
+#Comment: Missing data visualizaation missing. You can create a bar plot of missing genotype proportions across different groups.Overall, nice job. 
+
